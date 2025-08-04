@@ -1,0 +1,212 @@
+[
+  {
+    "id": "1",
+    "subject": "Test",
+    "category": "Promo",
+    "summary": "Summary"
+  },
+  {
+    "id": "2",
+    "subject": "Hi",
+    "summary": "Another one",
+    "category": "Promo"
+  },
+  {
+    "id": "3",
+    "subject": "Yo",
+    "summary": "Fresh",
+    "category": "Social"
+  },
+  {
+    "id": "1986e5abba52a182",
+    "subject": "GitHub Copilot: What’s in your free plan 🤖",
+    "category": "Updates",
+    "summary": "The email is introducing GitHub Copilot as a new service for users, providing details about its features and limitations in the free plan. It also includes links to learn more about the service."
+  },
+  {
+    "id": "1986e01cd1a43ccc",
+    "subject": "Set your loved ones up with a simpler way to ride",
+    "category": "Promo",
+    "summary": "Email promoting a simpler way to ride for loved ones."
+  },
+  {
+    "id": "1986d561b24530bc",
+    "subject": "Free Games on GOG",
+    "category": "Promo",
+    "summary": "Email is a promotional message about free games available on GOG, shared via a Reddit link."
+  },
+  {
+    "id": "1986d0fcf85efd9e",
+    "subject": "[StartupJobs] A je to tam! Sympulse už o vás ví!",
+    "category": "1",
+    "summary": "This email is a security notification regarding a successful job application for the position of AI Engineer (junior/medior) at Sympulse."
+  },
+  {
+    "id": "1986c9f4682a5864",
+    "subject": "“software engineer”: Cue AI - AI Engineer/Developer (Junior/Internship) and more",
+    "category": "Updates",
+    "summary": "This email contains job alerts for various AI-related positions such as AI Engineer/Developer (Junior/Internship), Python Developer, and Machine Learning Engineer in Prague, Czechia. The jobs are from companies like Cue AI, Tenth Revolution Group, and TALENTIQ."
+  },
+  {
+    "id": "1986f5ff6450de3f",
+    "subject": "[StartupJobs] Zvyšte své šance na přijetí!",
+    "category": "Promo",
+    "summary": "Email promoting an opportunity to increase job application chances by supporting networking efforts. Greeting from Ulan Baigali."
+  },
+  {
+    "id": "1986f562912451a7",
+    "subject": "Your application to Data Scientist at siteq.",
+    "category": "Updates",
+    "summary": "This email is a job application status update from LinkedIn regarding the application for Data Scientist position at siteq. The recipient, Ulan Baigali, was not selected for the position."
+  },
+  {
+    "id": "1986f52870d2dbc0",
+    "subject": "Accessories & Beauty Essentials | Elevated Wardrobe Staples | Top Premium Brands | Sporty Sneakers",
+    "category": "Promo",
+    "summary": "This email is a promotional message offering summer sales on accessories and beauty essentials, premium brands, and sporty sneakers. The offer includes up to 65% off and an extra 20% off."
+  },
+  {
+    "id": "1986f1841d2ec775",
+    "subject": "35 nových nabídek práce, například u MEDIAN, s.r.o. (Specialista podpory aplikací)",
+    "category": "Promo",
+    "summary": "Email contains 35 new job offers, including one from MEDIAN, s.r.o. for a Specialist in Application Support."
+  },
+  {
+    "id": "1986ee17d3d465e1",
+    "subject": "🕛 Zenový výprodej už jen do půlnoci",
+    "category": "Promo",
+    "summary": "Email is a promotional email announcing a Zenový výprodej (Zenový sale) that ends at midnight"
+  },
+  {
+    "id": "198724030eedc250",
+    "subject": "🔔 Your latest updates from Career Help and Spaces!",
+    "category": "Updates",
+    "summary": "The email is providing updates from Career Help and Spaces regarding the latest job opportunities on Braintrust, as well as a tip explaining the meaning of 'Invited by client'."
+  },
+  {
+    "id": "19871ff34dc18b0d",
+    "subject": "Monthly Activity Statement for July 2025",
+    "category": "Updates",
+    "summary": "The email is a general update regarding the availability of the Monthly Activity Statement for July 2025 for account U***61014. The user is instructed to log in to Portal to view the statement."
+  },
+  {
+    "id": "1987157c4aff8e75",
+    "subject": "“Software Engineer”: Opsfleet - AI Engineer and more",
+    "category": "Updates",
+    "summary": "The email contains job alerts for three different positions: AI Engineer at Opsfleet, Software Engineer at GYPR Pvt Ltd, and AI/ML Developer at Hustlr India Edtech. All positions are in the European Economic Area or European Union."
+  },
+  {
+    "id": "198714ff1f86c9b5",
+    "subject": "The Rope Split Ring — Now in two new styles",
+    "category": "Promo",
+    "summary": "Email from Craighill announcing the release of two new styles of their Rope Split Ring product. The email highlights the availability of a Black & White variant and an extended rope version in Long Slate Gray."
+  },
+  {
+    "id": "1987115e9752f23a",
+    "subject": "Microsoft, Zone&Co. and others are hiring in Prague. Apply Now.",
+    "category": "Promo",
+    "summary": "This email is a promotional email informing about job hiring opportunities in Prague by Microsoft, Zone&Co. and others."
+  },
+  {
+    "id": "198737f6f8c1e851",
+    "subject": "[StartupJobs] A je to tam! ISEE AI už o vás ví!",
+    "category": "3",
+    "summary": "This email falls under Updates category. It notifies about a successful application sent for the job position of Machine Learning Engineer in ISEE AI."
+  },
+  {
+    "id": "1987379f8b2dcd4a",
+    "subject": "[StartupJobs] A je to tam! DataSentics a.s. už o vás ví!",
+    "category": "1 - Security",
+    "summary": "An email has been sent regarding a successful application for the Data Engineer position at DataSentics a.s."
+  },
+  {
+    "id": "1987375af9f9a50a",
+    "subject": "[StartupJobs] A je to tam! Blindspot Solutions už o vás ví!",
+    "category": "Updates",
+    "summary": "An email from StartupJobs notifying the recipient about a successful application for Generative AI and ML Developer position at Blindspot Solutions. The recipient is encouraged to review similar job offers."
+  },
+  {
+    "id": "1987373a4ed42833",
+    "subject": "[StartupJobs] A je to tam! Sudolabs už o vás ví!",
+    "category": "Updates",
+    "summary": "Email regarding a successful job application for AI Engineer at Sudolabs. The recipient is encouraged to explore similar job offers."
+  },
+  {
+    "id": "198735ab5dd771de",
+    "subject": "Futures grid trading challenge: Share 30,000 USDT and 5 ETH in airdrops",
+    "category": "Promo",
+    "summary": "Email about a grid trading challenge offering airdrops of 30,000 USDT and 5 ETH."
+  },
+  {
+    "id": "19873e372e94012b",
+    "subject": "☕ Ranní komentář",
+    "category": "3",
+    "summary": "This email falls under Updates as it provides a weekly economic commentary on the impact of Donald Trump's new tariffs and employment data in the US, affecting global markets."
+  },
+  {
+    "id": "19873e188fab958d",
+    "subject": "Your application to Python Developer at Storm2",
+    "category": "Updates",
+    "summary": "This email is a job application update from Storm2 regarding Ulan Baigali's application for Python Developer position. The recipient was notified about the status of their application."
+  },
+  {
+    "id": "19873e0cad10e0a6",
+    "subject": "Your application to Python Developer at Synchro",
+    "category": "Updates",
+    "summary": "This email is a job application status update from Synchro regarding Ulan Baigali's application to the Python Developer position."
+  },
+  {
+    "id": "19873e087a5e6d55",
+    "subject": "Your application to Python Developer at Attractivate Consulting Solutions",
+    "category": "Updates",
+    "summary": "This email is a job application update from Attractivate Consulting Solutions regarding Ulan Baigali's application for the Python Developer position."
+  },
+  {
+    "id": "19873dfd37e65b52",
+    "subject": "Your application to Python Engineer at Eliassen Group",
+    "category": "Updates",
+    "summary": "This email is a general update from LinkedIn about the status of Ulan Baigali's application for a Python Engineer position at Eliassen Group."
+  },
+  {
+    "id": "19873e57e1375578",
+    "subject": "Your application was viewed by cbData",
+    "category": "Updates",
+    "summary": "This email is a notification from LinkedIn regarding a job application view by cbData."
+  },
+  {
+    "id": "19873e42486816d4",
+    "subject": "Your application to Python Developer at Endava North America",
+    "category": "Updates",
+    "summary": "This email is a job application update from Endava North America regarding your application to Python Developer. It notifies you about the status of your application and provides links for help and unsubscription."
+  },
+  {
+    "id": "198742403b5d735e",
+    "subject": "🍽️ Nechce se ti vařit? Tak uvaříme my!",
+    "category": "Promo",
+    "summary": "Email is a promotional message in Czech inviting the recipient to order food from the sender"
+  },
+  {
+    "id": "19874211ef002dfe",
+    "subject": "Výběrové řízení na pozici IT Administrátor - příležitost pro juniory!",
+    "category": "3",
+    "summary": "Email from BNP Paribas Cardif regarding job application for IT Administrator - an update on the selection process."
+  },
+  {
+    "id": "19874040efb4e635",
+    "subject": "Junior Software Developer role at Rite-Solutions: you would be a great fit!",
+    "category": "3",
+    "summary": "This email falls under the 'Updates' category as it presents a job opportunity from Rite-Solutions for a Junior Software Developer role."
+  },
+  {
+    "id": "19873f744950d6b1",
+    "subject": "Your application to INTERNSHIP HW design - Power electronics at KOSTAL Group",
+    "category": "Updates",
+    "summary": "This is a general update from LinkedIn regarding the status of an internship application at KOSTAL Group."
+  },
+  {
+    "id": "19873eb20af36d46",
+    "subject": "ZEISS Group is hiring a Data Analyst",
+    "category": "3",
+    "summary": "This email contains job opportunities in the field of data analysis and machine learning engineering. ZEISS Group is hiring a Data Analyst while Talentiq is looking for a Machine Learning Engineer, both based in Prague."
+  }
+]

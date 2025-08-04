@@ -1,0 +1,46 @@
+{
+    "emails": [
+        {
+            "id": "1",
+            "subject": "Your latest updates from Career Help and Spaces!",
+            "summary": "The email is providing updates from Career Help and Spaces regarding the latest job opportunities on Braintrust, as well as a tip explaining the meaning of 'Invited by client'.",
+            "body": "Hello, we have new job updates from Career Help and Spaces on Braintrust. This week, there are 5 positions suited to your profile...",
+            "category": "Updates"
+        },
+        {
+            "id": "2",
+            "subject": "Monthly Activity Statement for July 2025",
+            "summary": "The email is a general update regarding the availability of the Monthly Activity Statement for July 2025 for account U***61014.",
+            "body": "Dear user, your monthly activity statement is now available for July 2025. Please log in to your account to view or download your statement.",
+            "category": "Updates"
+        },
+        {
+            "id": "3",
+            "subject": "“Software Engineer”: Opsfleet - AI Engineer and more",
+            "summary": "The email contains job alerts for three different positions: AI Engineer at Opsfleet, Software Engineer at GYPR, and AI/ML Developer at Hustlr.",
+            "body": "We’ve found roles that match your profile: AI Engineer at Opsfleet, Software Engineer at GYPR, AI/ML Developer at Hustlr. Click below to apply.",
+            "category": "Promo"
+        },
+        {
+            "id": "4",
+            "subject": "The Rope Split Ring — Now in two new styles",
+            "summary": "Email from Craighill announcing the release of two new styles of their Rope Split Ring product.",
+            "body": "Introducing new styles of the Rope Split Ring in Black & White and Long Slate Gray. Limited time offer inside!",
+            "category": "Promo"
+        },
+        {
+            "id": "5",
+            "subject": "Microsoft, Zone&Co. and others are hiring in Prague. Apply Now.",
+            "summary": "This email is a promotional email informing about job hiring opportunities in Prague by Microsoft, Zone&Co., and others.",
+            "body": "Don’t miss this hiring wave in Prague. Microsoft and more are looking for remote-ready professionals. Apply today.",
+            "category": "Promo"
+        },
+        {
+            "id": "6",
+            "subject": "Suspicious login attempt detected",
+            "summary": "Security alert: a login attempt was made to your account from an unrecognized device.",
+            "body": "We noticed a login attempt from Berlin, Germany. If this wasn’t you, please reset your password immediately.",
+            "category": "Security"
+        }
+    ]
+}

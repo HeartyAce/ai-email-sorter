@@ -1,0 +1,19 @@
+[
+  {
+    "name": "Security",
+    "description": "Emails about login attempts, password resets, or account changes."
+  },
+  {
+    "name": "Promo",
+    "description": "Promotional emails, discounts, newsletters."
+  },
+  {
+    "name": "Updates",
+    "description": "General updates from services you use."
+  },
+  {
+    "id": "1754291601665",
+    "name": "alpha",
+    "description": "all the emails related to slae"
+  }
+]
