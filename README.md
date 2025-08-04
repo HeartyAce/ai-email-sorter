@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Email Sorter
 
-## Getting Started
+This is my submission for the AI email sorting challenge.
 
-First, run the development server:
+## ✨ Features
+
+- Google OAuth login
+- Category creation (with descriptions)
+- AI sorting of emails using category descriptions
+- AI summaries of each email (via Ollama locally)
+- Gmail archiving after import
+- Bulk actions: delete and unsubscribe (agent stubbed for safety)
+
+## 🛠️ Local Setup
+
+### Requirements
+
+- Node.js (v18+)
+- Ollama installed and running locally
+- Gmail OAuth credentials (dev mode)
+- `.env.local` file
+
+### Setup
 
 ```bash
+git clone https://github.com/HeartyAce/ai-email-sorter.git
+cd ai-email-sorter
+npm install
+Create a .env.local file with:
+
+env
+Copy
+Edit
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+NEXTAUTH_URL=http://localhost:3000
+Start Ollama and load a model (e.g., Mistral):
+
+bash
+Copy
+Edit
+ollama run mistral
+Start the dev server:
+
+bash
+Copy
+Edit
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Visit http://localhost:3000 in your browser.
