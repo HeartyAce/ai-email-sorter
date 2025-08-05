@@ -75,7 +75,7 @@ describe('Dashboard', () => {
                     json: () => Promise.resolve(mockCategories),
                 })
             }
-            if (url === '/api/emails/category') {
+            if (url === '/api/email/category') {
                 // POST for add category
                 if (opts && opts.method === 'POST') {
                     return Promise.resolve({ ok: true, json: () => Promise.resolve({}) })
@@ -187,7 +187,7 @@ describe('Dashboard', () => {
         fireEvent.change(screen.getByPlaceholderText(/description/i), { target: { value: 'Desc' } })
         fireEvent.click(screen.getByRole('button', { name: /save category/i }))
         await waitFor(() => {
-            expect(global.fetch).toHaveBeenCalledWith('/api/emails/category', expect.objectContaining({
+            expect(global.fetch).toHaveBeenCalledWith('/api/email/category', expect.objectContaining({
                 method: 'POST',
             }))
         })
@@ -201,7 +201,7 @@ describe('Dashboard', () => {
             if (url === '/api/categories') {
                 return Promise.resolve({ json: () => Promise.resolve(mockCategories) })
             }
-            if (url === '/api/emails/category') {
+            if (url === '/api/email/category') {
                 return Promise.resolve({
                     ok: false,
                     json: () => Promise.resolve({ error: 'fail' }),

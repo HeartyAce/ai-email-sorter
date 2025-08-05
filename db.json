@@ -250,5 +250,35 @@
     "subject": "Your OpenAI API account has been funded",
     "category": "Updates",
     "summary": "Your OpenAI API account has received new funds, confirming a successful funding transaction."
+  },
+  {
+    "id": "1987c494f5a37d7a",
+    "subject": "Ulan, you have new application updates this week",
+    "category": "Updates",
+    "summary": "This email from LinkedIn provides a weekly update on the status of your recent job applications."
+  },
+  {
+    "id": "1987c2d9201e9c81",
+    "subject": "build failed for ai email sorter",
+    "category": "Updates",
+    "summary": "The build process for the ai email sorter failed due to an error, so your latest changes were not deployed successfully."
+  },
+  {
+    "id": "1987c2c96f4db2b2",
+    "subject": "build failed for ai email sorter",
+    "category": "Updates",
+    "summary": "The build process for the ai email sorter failed due to an error, so your latest changes were not deployed. The email includes links to logs, troubleshooting, and support resources."
+  },
+  {
+    "id": "1987c289d4c056f8",
+    "subject": "build failed for ai email sorter",
+    "category": "Updates",
+    "summary": "The build process for the ai email sorter failed due to an error, so your latest changes were not deployed. Links are provided to view logs and troubleshoot the issue."
+  },
+  {
+    "id": "1987c278ac17d455",
+    "subject": "build failed for ai email sorter",
+    "category": "Updates",
+    "summary": "The build process for the ai email sorter failed due to an error, so your latest changes were not deployed successfully."
   }
 ]

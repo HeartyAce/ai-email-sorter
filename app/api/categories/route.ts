@@ -1,15 +1,30 @@
-// app/api/categories/route.ts
-import { NextResponse } from 'next/server'
-import { readFile } from 'fs/promises'
+// app/api/email/categories/route.ts
+import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
+import fs from 'fs'
 
-export async function GET() {
-    const filePath = path.join(process.cwd(), 'categories.json')
+const dataPath = path.resolve(process.cwd(), 'emails.json')
+
+export async function GET(
+    req: NextRequest,
+    { params }: { params: { category: string } }
+) {
     try {
-        const raw = await readFile(filePath, 'utf-8')
-        const categories = JSON.parse(raw)
-        return NextResponse.json({ categories })
+        const category = decodeURIComponent(params.category)
+        const file = fs.readFileSync(dataPath, 'utf8')
+        const parsed = JSON.parse(file)
+
+        const emails = parsed.emails || []
+        const filtered = emails.filter(
+            (email: any) => email.category === category
+        )
+
+        return NextResponse.json({ emails: filtered })
     } catch (err) {
-        return NextResponse.json({ error: 'Failed to load categories' }, { status: 500 })
+        console.error(err)
+        return NextResponse.json(
+            { error: 'Failed to load emails' },
+            { status: 500 }
+        )
     }
 }

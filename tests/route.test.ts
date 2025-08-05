@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { POST } from '../app/api/email/category/route';
+import { POST } from '../app/api/email/[category]/route';
 import fs from 'fs';
 import path from 'path';
 import { NextRequest } from 'next/server';

@@ -1,9 +1,34 @@
-// /app/api/emails/category/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+// /app/api/email/category/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import path from 'path'
+import fs from 'fs'
 
-const dataPath = path.resolve(process.cwd(), 'categories.json');
+const dataPath = path.resolve(process.cwd(), 'emails.json')
+
+// ✅ Add this GET handler
+export async function GET(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url)
+        const category = searchParams.get('name')
+
+        if (!category) {
+            return NextResponse.json({ error: 'Missing category name' }, { status: 400 })
+        }
+
+        const file = fs.readFileSync(dataPath, 'utf8')
+        const parsed = JSON.parse(file)
+
+        const emails = parsed.emails || []
+        const filtered = emails.filter(
+            (email: any) => email.category === category
+        )
+
+        return NextResponse.json({ emails: filtered })
+    } catch (err) {
+        console.error(err)
+        return NextResponse.json({ error: 'Failed to load emails' }, { status: 500 })
+    }
+}
 
 export async function POST(req: NextRequest) {
     try {
