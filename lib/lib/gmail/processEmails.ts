@@ -2,8 +2,9 @@ import { google } from 'googleapis';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { saveEmails } from '@/lib/db';
+import { OpenAI } from 'openai';
 
-const OLLAMA_API_URL = 'http://localhost:11434/api/generate';
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export type Category = {
     name: string;
@@ -17,13 +18,6 @@ export type EmailResult = {
     summary: string;
 };
 
-let fetchFn: typeof fetch;
-try {
-    fetchFn = fetch;
-} catch {
-    fetchFn = require('node-fetch');
-}
-
 export async function processEmails(accessToken: string): Promise<EmailResult[]> {
     console.log('🛂 Using access token:', accessToken.slice(0, 20), '...');
     const oAuth2Client = new google.auth.OAuth2();
@@ -32,6 +26,7 @@ export async function processEmails(accessToken: string): Promise<EmailResult[]>
 
     const categoryPath = path.join(process.cwd(), 'categories.json');
     let categories: Category[] = [];
+
     try {
         const raw = readFileSync(categoryPath, 'utf-8');
         categories = JSON.parse(raw);
@@ -41,7 +36,7 @@ export async function processEmails(accessToken: string): Promise<EmailResult[]>
 
     const { data } = await gmail.users.messages.list({
         userId: 'me',
-        maxResults: 5,
+        maxResults: 10,
     });
 
     const messages = data.messages || [];
@@ -49,7 +44,6 @@ export async function processEmails(accessToken: string): Promise<EmailResult[]>
     if (messages.length === 0) return [];
 
     const results: EmailResult[] = [];
-    const model = process.env.OLLAMA_MODEL || 'mistral';
 
     for (const msg of messages) {
         try {
@@ -62,26 +56,24 @@ export async function processEmails(accessToken: string): Promise<EmailResult[]>
 
             let category = 'Uncategorized';
             let summary = '';
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 60000);
 
             try {
-                const ollamaRes = await fetchFn(OLLAMA_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model, prompt, stream: false }),
-                    signal: controller.signal,
+                const completion = await openai.chat.completions.create({
+                    model: 'gpt-4.1',
+                    messages: [{ role: 'user', content: prompt }],
+                    temperature: 0.3,
                 });
-                clearTimeout(timeout);
-                const result = await ollamaRes.json();
-                const parsed = JSON.parse(result.response || '{}');
+
+                const content = completion.choices[0]?.message?.content || '{}';
+                const parsed = JSON.parse(content);
                 category = parsed.category || 'Uncategorized';
                 summary = parsed.summary || '';
             } catch (err) {
-                console.error('❌ Ollama failed:', err);
-                summary = 'Ollama timed out or failed';
+                console.error('❌ OpenAI failed:', err);
+                summary = 'AI categorization failed';
             }
 
+            // Archive email (remove from INBOX)
             await gmail.users.messages.modify({
                 userId: 'me',
                 id: msg.id!,

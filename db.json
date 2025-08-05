@@ -208,5 +208,47 @@
     "subject": "ZEISS Group is hiring a Data Analyst",
     "category": "3",
     "summary": "This email contains job opportunities in the field of data analysis and machine learning engineering. ZEISS Group is hiring a Data Analyst while Talentiq is looking for a Machine Learning Engineer, both based in Prague."
+  },
+  {
+    "id": "1987be738ce2512a",
+    "subject": "Activate your Fly.io account",
+    "category": "Uncategorized",
+    "summary": "AI categorization failed"
+  },
+  {
+    "id": "1987be729c0b4273",
+    "subject": "[GitHub] A third-party GitHub Application has been added to your account",
+    "category": "Uncategorized",
+    "summary": "AI categorization failed"
+  },
+  {
+    "id": "1987bd2394cf694a",
+    "subject": "Rapid7, OpenVPN Technologies and others are hiring in Prague. Apply Now.",
+    "category": "Uncategorized",
+    "summary": "AI categorization failed"
+  },
+  {
+    "id": "1987bcc1f82d16d9",
+    "subject": "Discover Excel Cheat Sheets",
+    "category": "Uncategorized",
+    "summary": "AI categorization failed"
+  },
+  {
+    "id": "1987ba4bdbd7a88e",
+    "subject": "“Software Engineer”: Reed - Software Engineer C++ (suitable for fresh graduates and mediors) and more",
+    "category": "Uncategorized",
+    "summary": "AI categorization failed"
+  },
+  {
+    "id": "1987c1ffeac239f4",
+    "subject": "Your API usage limits have increased",
+    "category": "Updates",
+    "summary": "Your API usage limits have been increased and your organization has been moved to Usage Tier 1. You can review the new rate limits in your account settings."
+  },
+  {
+    "id": "1987c1ffce5f1c52",
+    "subject": "Your OpenAI API account has been funded",
+    "category": "Updates",
+    "summary": "Your OpenAI API account has received new funds, confirming a successful funding transaction."
   }
 ]
