@@ -1,96 +1,67 @@
-// tests/app/api/email/[category]/route.test.ts
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import mockFs from 'mock-fs';
-import { GET, POST } from '@/app/api/email/[category]/route';
-import { NextRequest } from 'next/server';
-import path from 'path';
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { GET } from '@/app/api/email/route'
+import * as fs from 'fs'
 
-const dataPath = path.resolve(process.cwd(), 'emails.json');
+vi.mock('fs')
 
-// Fix: custom NextRequest mock supporting .json()
-function createNextRequest(url: string, method: 'GET' | 'POST', body?: any): NextRequest {
-    return {
-        method,
-        url,
-        headers: new Headers({ 'Content-Type': 'application/json' }),
-        json: async () => body,
-    } as unknown as NextRequest;
+const mockEmails = [
+    { id: '123', subject: 'Hello World', body: 'This is the body' },
+    { id: '456', subject: 'Another Email', body: 'Another body' },
+]
+
+function createRequestWithURL(url: string): Request {
+    return { url, method: 'GET' } as unknown as Request
 }
 
-beforeEach(() => {
-    mockFs({
-        [dataPath]: JSON.stringify({
-            emails: [
-                { id: '1', subject: 'Hello', category: 'Promo' },
-                { id: '2', subject: 'Alert', category: 'Security' }
-            ],
-            categories: [
-                { id: '123', name: 'Promo', description: 'Promotions and deals' }
-            ]
+describe('GET /api/email', () => {
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('returns 400 if no id param', async () => {
+        const req = createRequestWithURL('http://localhost/api/email')
+        const res = await GET(req)
+        const json = await res.json()
+
+        expect(res.status).toBe(400)
+        expect(json.error).toBe('Missing id param')
+    })
+
+    it('returns 404 if email not found', async () => {
+        vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify({ emails: mockEmails }))
+
+        const req = createRequestWithURL('http://localhost/api/email?id=999')
+        const res = await GET(req)
+        const json = await res.json()
+
+        expect(res.status).toBe(404)
+        expect(json.error).toBe('Email not found')
+    })
+
+    it('returns email data if id matches', async () => {
+        vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify({ emails: mockEmails }))
+
+        const req = createRequestWithURL('http://localhost/api/email?id=123')
+        const res = await GET(req)
+        const json = await res.json()
+
+        expect(res.status).toBe(200)
+        expect(json.subject).toBe('Hello World')
+        expect(json.bodyText).toBe('This is the body')
+        expect(json.bodyHtml).toBe('<p>This is the body</p>')
+        expect(json.from).toBe('example@example.com')
+    })
+
+    it('returns 500 if file read fails', async () => {
+        vi.mocked(fs.readFileSync).mockImplementation(() => {
+            throw new Error('fs read error')
         })
-    });
-});
 
-afterEach(() => {
-    mockFs.restore();
-});
+        const req = createRequestWithURL('http://localhost/api/email?id=123')
+        const res = await GET(req)
+        const json = await res.json()
 
-describe('GET /api/email/[category]', () => {
-    it('returns 400 if no category is provided', async () => {
-        const req = createNextRequest('http://localhost/api/email?name=', 'GET');
-        const res = await GET(req);
-        const json = await res.json();
-        expect(res.status).toBe(400);
-        expect(json.error).toBeDefined();
-    });
-
-    it('returns emails for a valid category', async () => {
-        const req = createNextRequest('http://localhost/api/email?name=Promo', 'GET');
-        const res = await GET(req);
-        const json = await res.json();
-        expect(res.status).toBe(200);
-        expect(json.emails).toHaveLength(1);
-        expect(json.emails[0].subject).toBe('Hello');
-    });
-
-    it('returns empty array for category with no matches', async () => {
-        const req = createNextRequest('http://localhost/api/email?name=Nonexistent', 'GET');
-        const res = await GET(req);
-        const json = await res.json();
-        expect(res.status).toBe(200);
-        expect(json.emails).toHaveLength(0);
-    });
-});
-
-describe('POST /api/email/[category]', () => {
-    it('returns 400 if name or description is missing', async () => {
-        const req = createNextRequest('http://localhost/api/email', 'POST', { name: 'Test' });
-        const res = await POST(req);
-        const json = await res.json();
-        expect(res.status).toBe(400);
-        expect(json.error).toBeDefined();
-    });
-
-    it('returns 400 if category already exists', async () => {
-        const req = createNextRequest('http://localhost/api/email', 'POST', {
-            name: 'Promo',
-            description: 'Duplicate',
-        });
-        const res = await POST(req);
-        const json = await res.json();
-        expect(res.status).toBe(400);
-        expect(json.error).toMatch(/already exists/i);
-    });
-
-    it('creates new category successfully', async () => {
-        const req = createNextRequest('http://localhost/api/email', 'POST', {
-            name: 'NewCat',
-            description: 'New Description',
-        });
-        const res = await POST(req);
-        const json = await res.json();
-        expect(res.status).toBe(200);
-        expect(json.success).toBe(true);
-        expect(json.category.name).toBe('NewCat');
-    });
-});
+        expect(res.status).toBe(500)
+        expect(json.error).toBe('Internal Server Error')
+    })
+})

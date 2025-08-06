@@ -280,5 +280,11 @@
     "subject": "build failed for ai email sorter",
     "category": "Updates",
     "summary": "The build process for the ai email sorter failed due to an error, so your latest changes were not deployed successfully."
+  },
+  {
+    "id": "1987d6522cc2e6e3",
+    "subject": "build failed for ai email sorter",
+    "category": "Updates",
+    "summary": "The build process for the ai email sorter failed due to an error, so the latest changes were not deployed. The email includes links to view logs, troubleshoot, and contact support."
   }
 ]
