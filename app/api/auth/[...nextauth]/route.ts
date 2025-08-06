@@ -1,12 +1,10 @@
-// /app/api/auth/[...nextauth]/route.ts
-
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import type { NextAuthOptions } from 'next-auth'
 import type { JWT } from 'next-auth/jwt'
 import type { Session } from 'next-auth'
 
-// Extend types for JWT
+// Extend JWT with Google tokens
 interface ExtendedToken extends JWT {
     accessToken?: string
     refreshToken?: string
@@ -14,7 +12,7 @@ interface ExtendedToken extends JWT {
     error?: string
 }
 
-// Extend types for session
+// Extend session to include Google tokens
 interface ExtendedSession extends Session {
     accessToken?: string
     refreshToken?: string
@@ -22,7 +20,7 @@ interface ExtendedSession extends Session {
     error?: string
 }
 
-// Helper to refresh access token
+// Token refresh helper
 async function refreshAccessToken(token: ExtendedToken): Promise<ExtendedToken> {
     try {
         const url = new URL('https://oauth2.googleapis.com/token')
@@ -54,7 +52,8 @@ async function refreshAccessToken(token: ExtendedToken): Promise<ExtendedToken> 
     }
 }
 
-export const authOptions: NextAuthOptions = {
+// DO NOT export this directly
+const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -78,14 +77,14 @@ export const authOptions: NextAuthOptions = {
         strategy: 'jwt',
     },
     callbacks: {
-        async jwt({ token, account }): Promise<ExtendedToken> {
+        async jwt({ token, account }) {
             if (account) {
                 console.log('🔐 First time login')
                 return {
                     ...token,
                     accessToken: account.access_token,
                     refreshToken: account.refresh_token,
-                    accessTokenExpires: account.expires_at! * 1000, // convert to ms
+                    accessTokenExpires: account.expires_at! * 1000,
                 }
             }
 
@@ -96,7 +95,7 @@ export const authOptions: NextAuthOptions = {
             console.log('🔄 Access token expired, refreshing...')
             return await refreshAccessToken(token as ExtendedToken)
         },
-        async session({ session, token }): Promise<ExtendedSession> {
+        async session({ session, token }) {
             const extendedSession: ExtendedSession = {
                 ...session,
                 accessToken: token.accessToken,
@@ -111,10 +110,10 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
-        // signIn: '/auth/signin', // Optional custom sign-in page
+        // signIn: '/auth/signin',
     },
 }
 
-// App Router handler export
+// ✅ Only export GET and POST handlers
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
