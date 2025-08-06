@@ -1,5 +1,8 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
+import type { JWT } from 'next-auth/jwt'
+import type { Session } from 'next-auth'
+import { authOptions } from '@/lib/authOptions'
 
 interface ExtendedToken extends JWT {
     accessToken?: string
@@ -84,7 +87,7 @@ const handler = NextAuth({
                 }
             }
 
-            if (token.accessTokenExpires && Date.now() < token.accessTokenExpires - 60 * 1000) {
+            if (token.accessTokenExpires && Date.now() < Number(token.accessTokenExpires) - 60 * 1000) {
                 return token
             }
 
@@ -100,7 +103,7 @@ const handler = NextAuth({
                 accessTokenExpires: token.accessTokenExpires as number,
             }
 
-            if (token.error) customSession.error = token.error
+            if (token.error) customSession.error = token.error as string
 
             return customSession
         },

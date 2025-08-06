@@ -2,9 +2,17 @@ import { google } from 'googleapis'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { NextRequest, NextResponse } from 'next/server'
+import type { Session } from 'next-auth'
+
+interface ExtendedSession extends Session {
+    accessToken?: string
+    refreshToken?: string
+    accessTokenExpires?: number
+    error?: string
+}
 
 export async function POST(req: NextRequest) {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as ExtendedSession
 
     if (!session?.accessToken) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -16,7 +24,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Missing or invalid "ids"' }, { status: 400 })
     }
 
-    // Only allow moving to trash, not permanent delete
     const auth = new google.auth.OAuth2()
     auth.setCredentials({ access_token: session.accessToken })
     const gmail = google.gmail({ version: 'v1', auth })

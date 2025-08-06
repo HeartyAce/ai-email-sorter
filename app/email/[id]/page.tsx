@@ -7,10 +7,15 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Loader2, Trash, MailX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import type { Session } from 'next-auth'
+
+interface ExtendedSession extends Session {
+    accessToken?: string;
+}
 
 export default function EmailDetail() {
     const { id } = useParams() as { id: string }
-    const { data: session } = useSession()
+    const { data: session } = useSession() as { data: ExtendedSession | null }
     const router = useRouter()
 
     const [loading, setLoading] = useState(true)

@@ -50,11 +50,14 @@ export const authOptions: NextAuthOptions = {
                     accessTokenExpires: account.expires_at! * 1000,
                 }
             }
-            if (token.accessTokenExpires && Date.now() < token.accessTokenExpires - 60 * 1000) {
-                return token
+
+            const extendedToken = token as ExtendedToken;
+            if (extendedToken.accessTokenExpires && Date.now() < extendedToken.accessTokenExpires - 60 * 1000) {
+                return extendedToken;
             }
+
             return {
-                ...token,
+                ...extendedToken,
                 error: 'RefreshAccessTokenError',
             }
         },
