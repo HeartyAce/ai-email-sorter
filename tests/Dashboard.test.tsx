@@ -1,47 +1,63 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import Dashboard from '@/app/dashboard/page';
+import DashboardClient from '@/app/dashboard/DashboardClient'; // ✅ Use client component
 import { vi } from 'vitest';
 
+// ✅ Mock html2pdf
 vi.mock('html2pdf.js', () => ({
     default: () => ({ from: () => ({ save: vi.fn() }) })
 }));
 
-// Mock fetch
-global.fetch = vi.fn((url) => {
-    if (url === '/api/gmail/process') {
-        return Promise.resolve({
-            json: () => Promise.resolve({
-                results: [
-                    { id: '1', subject: 'Hello', summary: 'Greeting', body: 'Hi there!', category: 'Promo' },
-                    { id: '2', subject: 'Security Alert', summary: 'Important', body: 'Check your account', category: 'Security' }
-                ]
-            }),
-        });
-    }
+// ✅ Mock fetch globally
+beforeEach(() => {
+    global.fetch = vi.fn((url) => {
+        if (url === '/api/gmail/process') {
+            return Promise.resolve({
+                json: () => Promise.resolve({
+                    results: [
+                        {
+                            id: '1',
+                            subject: 'Hello',
+                            summary: 'Greeting',
+                            body: 'Hi there!',
+                            category: 'Promo'
+                        },
+                        {
+                            id: '2',
+                            subject: 'Security Alert',
+                            summary: 'Important',
+                            body: 'Check your account',
+                            category: 'Security'
+                        }
+                    ]
+                })
+            });
+        }
 
-    if (url === '/api/categories') {
-        return Promise.resolve({
-            json: () => Promise.resolve({
-                categories: [
-                    { id: '1', name: 'Promo', description: 'Promotions' },
-                    { id: '2', name: 'Security', description: 'Alerts' },
-                ]
-            }),
-        });
-    }
+        if (url === '/api/categories') {
+            return Promise.resolve({
+                json: () => Promise.resolve({
+                    categories: [
+                        { id: '1', name: 'Promo', description: 'Promotions' },
+                        { id: '2', name: 'Security', description: 'Alerts' }
+                    ]
+                })
+            });
+        }
 
-    return Promise.resolve({ json: () => ({}) });
-}) as any;
+        return Promise.resolve({ json: () => ({}) });
+    }) as any;
+});
 
-describe('Dashboard Component', () => {
-    it('renders loading initially', () => {
-        render(<Dashboard />);
+describe('DashboardClient Component', () => {
+    it('renders loading initially', async () => {
+        render(<DashboardClient />);
         expect(screen.getByText(/loading/i)).toBeInTheDocument();
     });
 
+
     it('displays emails after fetch', async () => {
-        render(<Dashboard />);
+        render(<DashboardClient />);
 
         await waitFor(() => {
             expect(screen.getByText('Hello')).toBeInTheDocument();
@@ -49,8 +65,15 @@ describe('Dashboard Component', () => {
         });
     });
 
+    it('renders Sign Out button', async () => {
+        render(<DashboardClient />);
+        await waitFor(() => {
+            expect(screen.getByText('Sign Out')).toBeInTheDocument();
+        });
+    });
+
     it('filters by category', async () => {
-        render(<Dashboard />);
+        render(<DashboardClient />);
 
         await waitFor(() => {
             expect(screen.getByText('Hello')).toBeInTheDocument();
@@ -66,10 +89,14 @@ describe('Dashboard Component', () => {
     });
 
     it('shows and hides add category form', async () => {
-        render(<Dashboard />);
-        const addBtn = screen.getByText('+ Add Category');
+        render(<DashboardClient />);
+        await waitFor(() => {
+            expect(screen.getByText('+ Add Category')).toBeInTheDocument();
+        });
 
+        const addBtn = screen.getByText('+ Add Category');
         fireEvent.click(addBtn);
+
         expect(screen.getByPlaceholderText(/category name/i)).toBeInTheDocument();
 
         fireEvent.click(addBtn); // toggle again

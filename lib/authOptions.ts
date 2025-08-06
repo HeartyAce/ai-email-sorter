@@ -25,15 +25,9 @@ export const authOptions: NextAuthOptions = {
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             authorization: {
                 params: {
-                    scope: [
-                        'openid',
-                        'profile',
-                        'email',
-                        'https://www.googleapis.com/auth/gmail.readonly',
-                        'https://www.googleapis.com/auth/gmail.modify',
-                    ].join(' '),
+                    scope: 'openid profile email https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify',
                     access_type: 'offline',
-                    prompt: 'consent',
+                    prompt: 'consent', // important to always show
                 },
             },
         }),
