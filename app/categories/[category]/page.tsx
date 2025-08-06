@@ -14,35 +14,6 @@ type Email = {
     category: string
 }
 
-export async function GET(
-    req: NextRequest,
-    { params }: { params: { category: string } }
-) {
-    try {
-        const category = decodeURIComponent(params.category);
-        console.log('🔍 Requested category:', category);
-
-        const file = fs.readFileSync(dataPath, 'utf8');
-        const parsed = JSON.parse(file);
-        const emails = parsed.emails || [];
-
-        const filtered = (emails as Email[]).filter((email) => {
-            console.log('📧 Email category:', email.category);
-            return email.category === category;
-        });
-
-        console.log(`✅ Found ${filtered.length} emails for ${category}`);
-
-        return NextResponse.json({ emails: filtered });
-    } catch (err) {
-        console.error(err);
-        return NextResponse.json(
-            { error: 'Failed to load emails' },
-            { status: 500 }
-        );
-    }
-}
-
 
 export default function CategoryPage() {
     const { category } = useParams() as { category: string }

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
     Shield, Gift, Mail, Trash, MailX, CheckSquare, XSquare,
 } from 'lucide-react';
-import html2pdf from 'html2pdf.js';
+import { PDFExportButton } from '@/components/PDFExportButton'
 import ThemeToggle from '@/components/ThemeToggle';
 import Link from 'next/link';
 
@@ -107,10 +107,13 @@ export default function Dashboard() {
     const selectAll = () => setSelectedEmails(new Set(filtered.map((e) => e.id)));
     const deselectAll = () => setSelectedEmails(new Set());
 
-    const exportPDF = () => {
+    const exportPDF = async () => {
         const element = document.getElementById('export-section');
-        if (element) html2pdf().from(element).save('inbox-summary.pdf');
+        if (!element) return;
+        const html2pdf = (await import('html2pdf.js')).default;
+        html2pdf().from(element).save('inbox-summary.pdf');
     };
+
 
     const handleUnsubscribe = () => {
         alert(`Would attempt to unsubscribe ${selectedEmails.size} email(s)...`);

@@ -1,11 +1,10 @@
-import NextAuth, { NextAuthOptions, Session } from 'next-auth'
+import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-import { JWT } from 'next-auth/jwt'
 
 interface ExtendedToken extends JWT {
     accessToken?: string
     refreshToken?: string
-    accessTokenExpires?: number // in ms
+    accessTokenExpires?: number
     error?: string
 }
 
@@ -53,7 +52,7 @@ async function refreshAccessToken(token: ExtendedToken): Promise<ExtendedToken> 
     }
 }
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -74,14 +73,14 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, account }): Promise<JWT> {
+        async jwt({ token, account }) {
             if (account) {
                 console.log('🔑 First login - account received')
                 return {
                     ...token,
                     accessToken: account.access_token,
                     refreshToken: account.refresh_token,
-                    accessTokenExpires: account.expires_at! * 1000, // convert to ms
+                    accessTokenExpires: account.expires_at! * 1000,
                 }
             }
 
@@ -93,7 +92,7 @@ export const authOptions: NextAuthOptions = {
             return await refreshAccessToken(token as ExtendedToken)
         },
 
-        async session({ session, token }): Promise<ExtendedSession> {
+        async session({ session, token }) {
             const customSession: ExtendedSession = {
                 ...session,
                 accessToken: token.accessToken as string,
@@ -110,10 +109,5 @@ export const authOptions: NextAuthOptions = {
         strategy: 'jwt',
     },
     secret: process.env.NEXTAUTH_SECRET,
-    pages: {
-        // signIn: '/auth/signin',
-    },
-}
-
-const handler = NextAuth(authOptions)
+})
 export { handler as GET, handler as POST }
