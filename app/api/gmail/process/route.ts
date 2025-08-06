@@ -47,4 +47,3 @@ export async function POST(req: NextRequest) {
         )
     }
 }
-export const getSession = () => getServerSession(authOptions)

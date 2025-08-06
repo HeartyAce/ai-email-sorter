@@ -310,5 +310,11 @@
     "subject": "No Subject",
     "category": "alpha",
     "summary": "This email contains code for an API route that handles fetching emails by category, which is related to 'slae'."
+  },
+  {
+    "id": "1987e1d62c191693",
+    "subject": "Failed production deployment on team 'Ulan's projects'",
+    "category": "Updates",
+    "summary": "Notification about a failed production deployment on the 'Ulan's projects' team. The email alerts the recipient to an issue that occurred during deployment."
   }
 ]
