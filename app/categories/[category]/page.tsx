@@ -13,6 +13,7 @@ type Email = {
     body: string
     category: string
 }
+
 export async function GET(
     req: NextRequest,
     { params }: { params: { category: string } }
@@ -25,7 +26,7 @@ export async function GET(
         const parsed = JSON.parse(file);
         const emails = parsed.emails || [];
 
-        const filtered = emails.filter((email: any) => {
+        const filtered = (emails as Email[]).filter((email) => {
             console.log('📧 Email category:', email.category);
             return email.category === category;
         });
@@ -41,6 +42,7 @@ export async function GET(
         );
     }
 }
+
 
 export default function CategoryPage() {
     const { category } = useParams() as { category: string }

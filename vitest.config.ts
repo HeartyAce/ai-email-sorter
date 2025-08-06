@@ -1,15 +1,15 @@
-import { defineConfig } from 'vitest/config'
-import path from 'path'
+import { defineConfig } from 'vitest/config';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
+    plugins: [tsconfigPaths()],
     test: {
         globals: true,
-        environment: 'jsdom',
-        setupFiles: './tests/setup.ts',
+        environmentMatchGlobs: [
+            // Use jsdom for files testing React components
+            ['**/tests/**/*.test.tsx', 'jsdom'],
+        ],
+        environment: 'node', // default for everything else
+        setupFiles: './vitest.setup.ts'
     },
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, './'),
-        },
-    },
-})
+});

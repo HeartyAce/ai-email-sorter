@@ -3,12 +3,12 @@
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import React from 'react';
 
 export default function ThemeToggle() {
-    const { theme, setTheme, resolvedTheme } = useTheme();
+    const { setTheme, resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
-    // Prevent mismatch between SSR and client render
     useEffect(() => setMounted(true), []);
 
     if (!mounted) return null;
@@ -21,6 +21,7 @@ export default function ThemeToggle() {
         <button
             type="button"
             onClick={toggleTheme}
+            aria-label="Toggle theme"
             className="rounded-md border p-2 hover:bg-muted transition"
         >
             {resolvedTheme === 'dark' ? (

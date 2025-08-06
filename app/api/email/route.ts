@@ -1,9 +1,15 @@
-// app/api/email/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 import fs from 'fs'
 
 const dataPath = path.resolve(process.cwd(), 'emails.json')
+
+type Email = {
+    id: string
+    subject: string
+    body: string
+    // Optionally include others if present in your data
+}
 
 export async function GET(req: NextRequest) {
     try {
@@ -15,10 +21,10 @@ export async function GET(req: NextRequest) {
         }
 
         const file = fs.readFileSync(dataPath, 'utf8')
-        const parsed = JSON.parse(file)
-        const emails = parsed.emails || []
+        const parsed: { emails: Email[] } = JSON.parse(file)
+        const emails: Email[] = parsed.emails || []
 
-        const email = emails.find((e: any) => e.id === id)
+        const email = emails.find((e) => e.id === id)
 
         if (!email) {
             return NextResponse.json({ error: 'Email not found' }, { status: 404 })
@@ -29,7 +35,7 @@ export async function GET(req: NextRequest) {
             from: 'example@example.com', // mock sender
             date: '2025-08-06',          // mock date
             bodyText: email.body,
-            bodyHtml: `<p>${email.body}</p>`
+            bodyHtml: `<p>${email.body}</p>`,
         })
     } catch (err) {
         console.error('Error loading email:', err)

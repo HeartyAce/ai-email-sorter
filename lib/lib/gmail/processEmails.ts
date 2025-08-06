@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import { saveEmails } from '@/lib/db';
 import { OpenAI } from 'openai';
+import { gmail_v1 } from 'googleapis';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -94,21 +95,27 @@ export async function processEmails(accessToken: string): Promise<EmailResult[]>
 
 // Helpers
 
-function getPlainTextFromPayload(payload: any): string {
+function getPlainTextFromPayload(
+    payload: gmail_v1.Schema$MessagePart | null | undefined
+): string {
     if (!payload) return '';
+
     if (payload.body?.data) {
         let data = payload.body.data.replace(/-/g, '+').replace(/_/g, '/');
         while (data.length % 4) data += '=';
         return Buffer.from(data, 'base64').toString('utf-8');
     }
-    if (payload.parts && Array.isArray(payload.parts)) {
+
+    if (Array.isArray(payload.parts)) {
         for (const part of payload.parts) {
             const text = getPlainTextFromPayload(part);
             if (text) return text;
         }
     }
+
     return '';
 }
+
 
 function buildPrompt(subject: string, body: string, categories: Category[]): string {
     const list = categories

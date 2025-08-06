@@ -17,28 +17,33 @@ export async function GET(req: NextRequest) {
     try {
         const results = await processEmails(session.accessToken)
         return NextResponse.json({ results })
-    } catch (err: any) {
-        console.error('❌ Email processing failed:', err.message || err)
+    } catch (err) {
+        const error = err as Error
+        console.error('❌ Email processing failed:', error.message)
         return NextResponse.json(
-            { error: 'Failed to process Gmail', details: err.message || String(err) },
+            { error: 'Failed to process Gmail', details: error.message },
             { status: 500 }
         )
     }
 }
 
 export async function POST(req: NextRequest) {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(authOptions)
 
-    if (!session || !session.accessToken) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.accessToken) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     try {
-        const body = await req.json();
-        const results = await processEmails(session.accessToken, body);
-        return NextResponse.json({ results });
+        const body: Record<string, unknown> = await req.json()
+        const results = await processEmails(session.accessToken, body)
+        return NextResponse.json({ results })
     } catch (err) {
-        console.error('❌ Email processing failed:', err);
-        return NextResponse.json({ error: 'Failed to process Gmail', details: err.message }, { status: 500 });
+        const error = err as Error
+        console.error('❌ Email processing failed:', error)
+        return NextResponse.json(
+            { error: 'Failed to process Gmail', details: error.message },
+            { status: 500 }
+        )
     }
 }

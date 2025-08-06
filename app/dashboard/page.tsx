@@ -1,6 +1,5 @@
 'use client';
-
-import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -18,6 +17,11 @@ interface EmailSummary {
     category: string;
 }
 
+interface Category {
+    id: string;
+    name: string;
+    description: string;
+}
 
 export default function Dashboard() {
     const [emails, setEmails] = useState<EmailSummary[]>([]);
@@ -28,13 +32,12 @@ export default function Dashboard() {
 
     const [showForm, setShowForm] = useState(false);
     const [newCategory, setNewCategory] = useState({ name: '', description: '' });
-    const router = useRouter();
 
     // Fetch emails
     useEffect(() => {
         fetch('/api/gmail/process')
             .then((res) => res.json())
-            .then((data) => {
+            .then((data: { results: EmailSummary[] }) => {
                 setEmails(data.results || []);
                 setLoading(false);
             });
@@ -44,8 +47,8 @@ export default function Dashboard() {
     useEffect(() => {
         fetch('/api/categories')
             .then((res) => res.json())
-            .then((data) => {
-                setCategories(['All', ...data.categories.map((c: any) => c.name)]);
+            .then((data: { categories: Category[] }) => {
+                setCategories(['All', ...data.categories.map((c) => c.name)]);
             });
     }, []);
 
@@ -71,7 +74,7 @@ export default function Dashboard() {
             const catData = await catRes.json();
 
             if (Array.isArray(catData.categories)) {
-                setCategories(['All', ...catData.categories.map((c: any) => c.name)]);
+                setCategories(['All', ...catData.categories.map((c: Category) => c.name)]);
             } else {
                 console.error('Categories response malformed:', catData);
             }
@@ -81,7 +84,6 @@ export default function Dashboard() {
             alert('An error occurred. Check console for details.');
         }
     };
-
 
     const filtered =
         selectedCategory === 'All'
@@ -112,7 +114,6 @@ export default function Dashboard() {
 
     const handleUnsubscribe = () => {
         alert(`Would attempt to unsubscribe ${selectedEmails.size} email(s)...`);
-        // Add unsubscribe AI agent here
     };
 
     const handleDelete = async () => {
@@ -222,7 +223,7 @@ export default function Dashboard() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
                             className={`rounded-2xl shadow-xl p-4 border transition-transform relative cursor-pointer backdrop-blur-sm
-              ${selectedEmails.has(email.id)
+                            ${selectedEmails.has(email.id)
                                     ? 'ring-2 ring-primary bg-blue-100 dark:bg-blue-900'
                                     : 'bg-white/10 dark:bg-white/5'}`}
                         >
@@ -242,7 +243,6 @@ export default function Dashboard() {
                                     {email.body && (
                                         <p className="text-sm mt-2 whitespace-pre-wrap">{email.body}</p>
                                     )}
-
                                 </div>
                             </Link>
                         </motion.div>

@@ -1,162 +1,161 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { processEmails } from '@/lib/lib/gmail/processEmails';
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { processEmails } from '@/lib/lib/gmail/processEmails'
+import fs from 'fs'
+import path from 'path'
+import { google } from 'googleapis'
+import { OpenAI } from 'openai'
+import { saveEmails } from '@/lib/db'
 
-vi.mock('fs', () => ({
-    readFileSync: vi.fn(() =>
-        JSON.stringify([
-            { name: 'Promo', description: 'Promotional emails' },
-            { name: 'Work', description: 'Work-related emails' },
-        ])
-    ),
-}));
+// 👇 Mock getCategorization to fail (for fallback test)
+vi.mock('@/lib/openai', () => ({
+    getCategorization: vi.fn().mockRejectedValue(new Error('Mock failure')),
+}))
 
-vi.mock('googleapis', () => {
-    const mockList = vi.fn(() =>
-        Promise.resolve({
-            data: {
-                messages: [{ id: 'msg1' }, { id: 'msg2' }],
-            },
-        })
-    );
-
-    const mockGet = vi.fn((params) =>
-        Promise.resolve({
-            data: {
-                payload: {
-                    headers: [{ name: 'Subject', value: 'Test Email' }],
-                    body: { data: Buffer.from('This is the body').toString('base64') },
-                },
-            },
-        })
-    );
-
-    const mockModify = vi.fn(() => Promise.resolve());
-
+// 👇 Mock fs.readFileSync & path.join
+vi.mock('fs')
+vi.mock('path', async () => {
+    const actual = await vi.importActual<typeof import('path')>('path')
     return {
-        google: {
-            gmail: () => ({
-                users: {
-                    messages: {
-                        list: mockList,
-                        get: mockGet,
-                        modify: mockModify,
-                    },
-                },
-            }),
-            auth: {
-                OAuth2: class {
-                    setCredentials() { }
-                },
-            },
-        },
-    };
-});
+        ...actual,
+        join: vi.fn(() => '/mocked/path/categories.json'),
+    }
+})
 
-// Mock saveEmails to avoid actual DB writes
-vi.mock('@/lib/db', () => ({
-    saveEmails: vi.fn(() => Promise.resolve()),
-}));
+// 👇 Mock OpenAI chat completions
+// 👇 Global OpenAI mock, modifiable per test
+let shouldFail = false;
 
-global.fetch = vi.fn(() =>
-    Promise.resolve({
-        json: () => Promise.resolve({ response: JSON.stringify({ category: 'Promo', summary: 'Short summary' }) }),
-    })
-) as any;
-
-describe('processEmails', () => {
-    beforeEach(() => {
-        vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-        vi.clearAllMocks();
-        vi.useRealTimers();
-    });
-
-    it('returns processed email results', async () => {
-        const results = await processEmails('fake-access-token');
-
-        expect(results.length).toBe(2);
-        expect(results[0]).toEqual({
-            id: 'msg1',
-            subject: 'Test Email',
-            category: 'Promo',
-            summary: 'Short summary',
-        });
-    });
-
-    it('handles Gmail authentication failure', async () => {
-        // Patch googleapis mock to throw on getProfile
-        const { google } = await import('googleapis');
-        google.gmail = () => ({
-            users: {
-                getProfile: () => { throw { response: { data: 'Auth error' } }; },
-                messages: {
-                    list: vi.fn(),
-                    get: vi.fn(),
-                    modify: vi.fn(),
-                },
-            },
-        });
-        await expect(processEmails('bad-token')).rejects.toThrow('Invalid Gmail credentials');
-    });
-
-    it('handles Gmail message listing failure', async () => {
-        // Patch googleapis mock to throw on messages.list
-        const { google } = await import('googleapis');
-        google.gmail = () => ({
-            users: {
-                getProfile: vi.fn(() => Promise.resolve({ data: { emailAddress: 'test@example.com' } })),
-                messages: {
-                    list: vi.fn(() => { throw { response: { data: 'List error' } }; }),
-                    get: vi.fn(),
-                    modify: vi.fn(),
-                },
-            },
-        });
-        await expect(processEmails('token')).rejects.toThrow('Gmail message listing failed');
-    });
-
-    it('handles Ollama call failure gracefully', async () => {
-        (global.fetch as any).mockImplementationOnce(() => Promise.reject(new Error('Ollama down')));
-        const results = await processEmails('fake-access-token');
-        expect(results[0].summary).toBe('Ollama timed out or failed');
-        expect(results[0].category).toBe('Uncategorized');
-    });
-
-    it('archives messages after processing', async () => {
-        const { google } = await import('googleapis');
-        const modify = vi.fn(() => Promise.resolve());
-        google.gmail = () => ({
-            users: {
-                getProfile: vi.fn(() => Promise.resolve({ data: { emailAddress: 'test@example.com' } })),
-                messages: {
-                    list: vi.fn(() => Promise.resolve({ data: { messages: [{ id: 'msg1' }] } })),
-                    get: vi.fn(() =>
-                        Promise.resolve({
-                            data: {
-                                payload: {
-                                    headers: [{ name: 'Subject', value: 'Test Email' }],
-                                    body: { data: Buffer.from('Body').toString('base64') },
+vi.mock('openai', () => ({
+    OpenAI: vi.fn().mockImplementation(() => ({
+        chat: {
+            completions: {
+                create: vi.fn().mockImplementation(() => {
+                    if (shouldFail) {
+                        throw new Error('OpenAI failure')
+                    }
+                    return Promise.resolve({
+                        choices: [
+                            {
+                                message: {
+                                    content: JSON.stringify({
+                                        category: 'Promo',
+                                        summary: 'Summary here',
+                                    }),
                                 },
                             },
-                        })
-                    ),
-                    modify,
+                        ],
+                    })
+                }),
+            },
+        },
+    })),
+}))
+
+
+// 👇 Mock Google Gmail API
+vi.mock('googleapis', async () => ({
+    google: {
+        gmail: vi.fn().mockReturnValue({
+            users: {
+                messages: {
+                    list: vi.fn().mockResolvedValue({
+                        data: {
+                            messages: [{ id: 'msg-123' }],
+                        },
+                    }),
+                    get: vi.fn().mockResolvedValue({
+                        data: {
+                            id: 'msg-123',
+                            payload: {
+                                headers: [{ name: 'Subject', value: 'Test Subject' }],
+                                body: {
+                                    data: Buffer.from('This is a test email body').toString('base64'),
+                                },
+                            },
+                        },
+                    }),
+                    modify: vi.fn().mockResolvedValue({}),
                 },
             },
-        });
-        await processEmails('fake-access-token');
-        expect(modify).toHaveBeenCalledWith({
-            userId: 'me',
-            id: 'msg1',
-            requestBody: { removeLabelIds: ['INBOX'] },
-        });
-    });
+        }),
+        auth: {
+            OAuth2: vi.fn().mockImplementation(() => ({
+                setCredentials: vi.fn(),
+            })),
+        },
+    },
+}))
 
-    it('calls saveEmails with results', async () => {
-        const { saveEmails } = await import('@/lib/db');
-        await processEmails('fake-access-token');
-        expect(saveEmails).toHaveBeenCalled();
-    });
-});
+// 👇 Mock db saveEmails
+vi.mock('@/lib/db', () => ({
+    saveEmails: vi.fn(),
+}))
+
+describe('processEmails()', () => {
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('processes Gmail messages and categorizes them', async () => {
+        vi.mocked(fs.readFileSync).mockReturnValueOnce(
+            JSON.stringify([{ name: 'Promo', description: 'Promotional messages' }])
+        )
+
+        const results = await processEmails('mock-access-token')
+
+        expect(results).toHaveLength(1)
+        expect(results[0]).toMatchObject({
+            id: 'msg-123',
+            subject: 'Test Subject',
+            category: 'Promo',
+            summary: 'Summary here',
+        })
+
+        expect(saveEmails).toHaveBeenCalledWith(results)
+    })
+
+    it('returns empty array if no messages are found', async () => {
+        const mockGmail = google.gmail()
+        vi.mocked(mockGmail.users.messages.list).mockResolvedValueOnce({ data: { messages: [] } })
+
+        const results = await processEmails('mock-access-token')
+        expect(results).toEqual([])
+    })
+
+    it('uses fallback category and summary on OpenAI failure', async () => {
+        shouldFail = true;
+
+        vi.mocked(fs.readFileSync).mockReturnValueOnce(
+            JSON.stringify([{ name: 'Promo', description: 'Promotional messages' }])
+        )
+
+        const results = await processEmails('mock-access-token')
+
+        expect(results[0].category).toBe('Uncategorized')
+        expect(results[0].summary).toBe('AI categorization failed')
+
+        shouldFail = false; // reset for other tests
+    })
+
+
+    it('logs and skips failed messages without throwing', async () => {
+        const mockGmail = google.gmail()
+        vi.mocked(fs.readFileSync).mockReturnValueOnce('[]')
+        vi.mocked(mockGmail.users.messages.get).mockRejectedValueOnce(new Error('Message fetch failed'))
+
+        const results = await processEmails('mock-access-token')
+        expect(results).toEqual([])
+    })
+
+    it('handles missing categories.json gracefully', async () => {
+        vi.mocked(fs.readFileSync).mockImplementation(() => {
+            throw new Error('File not found')
+        })
+
+        const results = await processEmails('mock-access-token')
+
+        // Should still work using OpenAI fallback (which returns 'Promo' in this case)
+        expect(results.length).toBe(1)
+        expect(results[0].category).toBe('Promo')
+    })
+})

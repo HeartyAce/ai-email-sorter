@@ -1,11 +1,18 @@
-import NextAuth, { NextAuthOptions } from 'next-auth'
+import NextAuth, { NextAuthOptions, Session } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { JWT } from 'next-auth/jwt'
 
 interface ExtendedToken extends JWT {
     accessToken?: string
     refreshToken?: string
-    accessTokenExpires?: number // ms timestamp
+    accessTokenExpires?: number // in ms
+    error?: string
+}
+
+interface ExtendedSession extends Session {
+    accessToken?: string
+    refreshToken?: string
+    accessTokenExpires?: number
     error?: string
 }
 
@@ -67,8 +74,7 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, account }) {
-            // Initial login
+        async jwt({ token, account }): Promise<JWT> {
             if (account) {
                 console.log('🔑 First login - account received')
                 return {
@@ -79,22 +85,25 @@ export const authOptions: NextAuthOptions = {
                 }
             }
 
-            // Token still valid
             if (token.accessTokenExpires && Date.now() < token.accessTokenExpires - 60 * 1000) {
                 return token
             }
 
-            // Token expired – refresh it
             console.log('🔄 Token expired – refreshing...')
             return await refreshAccessToken(token as ExtendedToken)
         },
 
-        async session({ session, token }) {
-            session.accessToken = token.accessToken
-                ; (session as any).refreshToken = token.refreshToken
-                ; (session as any).accessTokenExpires = token.accessTokenExpires
-            if (token.error) (session as any).error = token.error
-            return session
+        async session({ session, token }): Promise<ExtendedSession> {
+            const customSession: ExtendedSession = {
+                ...session,
+                accessToken: token.accessToken as string,
+                refreshToken: token.refreshToken as string,
+                accessTokenExpires: token.accessTokenExpires as number,
+            }
+
+            if (token.error) customSession.error = token.error
+
+            return customSession
         },
     },
     session: {
@@ -102,7 +111,7 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
-        // signIn: '/auth/signin' // if you want a custom page
+        // signIn: '/auth/signin',
     },
 }
 

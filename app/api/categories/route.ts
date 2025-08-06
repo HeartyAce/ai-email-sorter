@@ -3,6 +3,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 import fs from 'fs'
 
+type Email = {
+    id: string
+    subject: string
+    summary: string
+    body: string
+    category: string
+}
+
 const dataPath = path.resolve(process.cwd(), 'emails.json')
 
 export async function GET(
@@ -14,9 +22,9 @@ export async function GET(
         const file = fs.readFileSync(dataPath, 'utf8')
         const parsed = JSON.parse(file)
 
-        const emails = parsed.emails || []
+        const emails: Email[] = parsed.emails || []
         const filtered = emails.filter(
-            (email: any) => email.category === category
+            (email) => email.category === category
         )
 
         return NextResponse.json({ emails: filtered })

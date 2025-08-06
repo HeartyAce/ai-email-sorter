@@ -21,11 +21,12 @@ export async function GET(req: NextRequest) {
 
     try {
         const message = await gmail.users.messages.get({ userId: 'me', id })
+
         const headers = message.data.payload?.headers || []
 
-        const subject = headers.find(h => h.name === 'Subject')?.value || 'No subject'
-        const from = headers.find(h => h.name === 'From')?.value || 'Unknown sender'
-        const date = headers.find(h => h.name === 'Date')?.value || 'Unknown date'
+        const subject = headers.find((h) => h.name === 'Subject')?.value || 'No subject'
+        const from = headers.find((h) => h.name === 'From')?.value || 'Unknown sender'
+        const date = headers.find((h) => h.name === 'Date')?.value || 'Unknown date'
 
         const { text, html } = extractEmailContent(message.data.payload)
 
@@ -37,26 +38,29 @@ export async function GET(req: NextRequest) {
             bodyHtml: html,
         })
     } catch (e) {
-        console.error('Failed to fetch email:', e)
+        console.error('❌ Failed to fetch email:', e)
         return NextResponse.json({ error: 'Failed to fetch email' }, { status: 500 })
     }
 }
 
+interface GmailPayload {
+    mimeType?: string
+    body?: { data?: string }
+    parts?: GmailPayload[]
+}
+
 // Recursively extract plain text and HTML from payload
-function extractEmailContent(payload: any): { text: string, html: string } {
+function extractEmailContent(payload?: GmailPayload): { text: string; html: string } {
     let text = ''
     let html = ''
 
-    function walk(part: any) {
+    function walk(part: GmailPayload) {
         if (part.mimeType === 'text/plain' && part.body?.data) {
-            // Gmail uses base64url encoding, not standard base64
-            let data = part.body.data.replace(/-/g, '+').replace(/_/g, '/');
-            while (data.length % 4) data += '=';
-            text = Buffer.from(data, 'base64').toString('utf-8')
+            const decoded = decodeBase64Url(part.body.data)
+            text = decoded
         } else if (part.mimeType === 'text/html' && part.body?.data) {
-            let data = part.body.data.replace(/-/g, '+').replace(/_/g, '/');
-            while (data.length % 4) data += '=';
-            html = Buffer.from(data, 'base64').toString('utf-8')
+            const decoded = decodeBase64Url(part.body.data)
+            html = decoded
         }
 
         if (Array.isArray(part.parts)) {
@@ -64,6 +68,17 @@ function extractEmailContent(payload: any): { text: string, html: string } {
         }
     }
 
-    walk(payload)
+    if (payload) {
+        walk(payload)
+    }
+
     return { text, html }
+}
+
+function decodeBase64Url(base64url: string): string {
+    let data = base64url.replace(/-/g, '+').replace(/_/g, '/')
+    while (data.length % 4 !== 0) {
+        data += '='
+    }
+    return Buffer.from(data, 'base64').toString('utf-8')
 }
