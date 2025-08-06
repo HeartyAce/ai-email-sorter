@@ -1,14 +1,20 @@
-import NextAuth, { NextAuthOptions, Session } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
-import { JWT } from 'next-auth/jwt'
+// /app/api/auth/[...nextauth]/route.ts
 
+import NextAuth from 'next-auth'
+import GoogleProvider from 'next-auth/providers/google'
+import type { NextAuthOptions } from 'next-auth'
+import type { JWT } from 'next-auth/jwt'
+import type { Session } from 'next-auth'
+
+// Extend types for JWT
 interface ExtendedToken extends JWT {
     accessToken?: string
     refreshToken?: string
-    accessTokenExpires?: number // in ms
+    accessTokenExpires?: number
     error?: string
 }
 
+// Extend types for session
 interface ExtendedSession extends Session {
     accessToken?: string
     refreshToken?: string
@@ -16,6 +22,7 @@ interface ExtendedSession extends Session {
     error?: string
 }
 
+// Helper to refresh access token
 async function refreshAccessToken(token: ExtendedToken): Promise<ExtendedToken> {
     try {
         const url = new URL('https://oauth2.googleapis.com/token')
@@ -24,32 +31,26 @@ async function refreshAccessToken(token: ExtendedToken): Promise<ExtendedToken> 
         url.searchParams.set('grant_type', 'refresh_token')
         url.searchParams.set('refresh_token', token.refreshToken!)
 
-        const response = await fetch(url.toString(), {
+        const res = await fetch(url.toString(), {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         })
 
-        const refreshed = await response.json()
+        const refreshedTokens = await res.json()
 
-        if (!response.ok) {
-            throw refreshed
-        }
+        if (!res.ok) throw refreshedTokens
 
-        console.log('🔁 Refreshed token', refreshed)
+        console.log('🔁 Token refreshed:', refreshedTokens)
 
         return {
             ...token,
-            accessToken: refreshed.access_token,
-            accessTokenExpires: Date.now() + (refreshed.expires_in ?? 3600) * 1000,
-            refreshToken: refreshed.refresh_token ?? token.refreshToken,
-            error: undefined,
+            accessToken: refreshedTokens.access_token,
+            accessTokenExpires: Date.now() + (refreshedTokens.expires_in ?? 3600) * 1000,
+            refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
         }
     } catch (error) {
-        console.error('❌ Error refreshing access token', error)
-        return {
-            ...token,
-            error: 'RefreshAccessTokenError',
-        }
+        console.error('❌ Error refreshing access token:', error)
+        return { ...token, error: 'RefreshAccessTokenError' }
     }
 }
 
@@ -73,10 +74,13 @@ export const authOptions: NextAuthOptions = {
             },
         }),
     ],
+    session: {
+        strategy: 'jwt',
+    },
     callbacks: {
-        async jwt({ token, account }): Promise<JWT> {
+        async jwt({ token, account }): Promise<ExtendedToken> {
             if (account) {
-                console.log('🔑 First login - account received')
+                console.log('🔐 First time login')
                 return {
                     ...token,
                     accessToken: account.access_token,
@@ -89,31 +93,28 @@ export const authOptions: NextAuthOptions = {
                 return token
             }
 
-            console.log('🔄 Token expired – refreshing...')
+            console.log('🔄 Access token expired, refreshing...')
             return await refreshAccessToken(token as ExtendedToken)
         },
-
         async session({ session, token }): Promise<ExtendedSession> {
-            const customSession: ExtendedSession = {
+            const extendedSession: ExtendedSession = {
                 ...session,
-                accessToken: token.accessToken as string,
-                refreshToken: token.refreshToken as string,
-                accessTokenExpires: token.accessTokenExpires as number,
+                accessToken: token.accessToken,
+                refreshToken: token.refreshToken,
+                accessTokenExpires: token.accessTokenExpires,
             }
 
-            if (token.error) customSession.error = token.error
+            if (token.error) extendedSession.error = token.error
 
-            return customSession
+            return extendedSession
         },
-    },
-    session: {
-        strategy: 'jwt',
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
-        // signIn: '/auth/signin',
+        // signIn: '/auth/signin', // Optional custom sign-in page
     },
 }
 
+// App Router handler export
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
