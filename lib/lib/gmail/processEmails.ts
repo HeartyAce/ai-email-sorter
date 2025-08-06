@@ -37,7 +37,7 @@ export async function processEmails(accessToken: string): Promise<EmailResult[]>
 
     const { data } = await gmail.users.messages.list({
         userId: 'me',
-        maxResults: 1,
+        maxResults: 10,
     });
 
     const messages = data.messages || [];

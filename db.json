@@ -316,5 +316,47 @@
     "subject": "Failed production deployment on team 'Ulan's projects'",
     "category": "Updates",
     "summary": "Notification about a failed production deployment on the 'Ulan's projects' team. The email alerts the recipient to an issue that occurred during deployment."
+  },
+  {
+    "id": "1987e37ec5a590fa",
+    "subject": "Oxidian is hiring a Python Developer",
+    "category": "Promo",
+    "summary": "This email contains job recommendations for Python Developer positions, including roles at Oxidian and Tietoevry, with links to apply via LinkedIn."
+  },
+  {
+    "id": "1987e3114e72662d",
+    "subject": "☕ Ranní komentář",
+    "category": "Updates",
+    "summary": "This is a morning commentary email discussing recent market events, including US macroeconomic data, proposed tariffs by Trump, and corporate earnings from companies like AMD and Pfizer."
+  },
+  {
+    "id": "1987e23f7583f655",
+    "subject": "Failed production deployment on team 'Ulan's projects'",
+    "category": "Updates",
+    "summary": "Notification about a failed production deployment on the 'Ulan's projects' team. The email alerts the user to an issue that occurred during deployment."
+  },
+  {
+    "id": "1987e227e3481ed0",
+    "subject": "build failed for ai email sorter",
+    "category": "Updates",
+    "summary": "The build process for the ai email sorter failed due to an error, so your latest changes were not deployed successfully."
+  },
+  {
+    "id": "1987e1bb8f7883db",
+    "subject": "build failed for ai email sorter",
+    "category": "Updates",
+    "summary": "The build process for the ai email sorter project failed due to an error, so your latest changes were not deployed. You can review the logs and troubleshooting guide for more information."
+  },
+  {
+    "id": "1987e1a86524467c",
+    "subject": "build failed for ai email sorter",
+    "category": "Updates",
+    "summary": "The build process for the ai email sorter project failed due to an error, so recent changes were not deployed. The email includes links to logs, troubleshooting resources, and support."
+  },
+  {
+    "id": "1987e1a2e56f6b4a",
+    "subject": "No Subject",
+    "category": "alpha",
+    "summary": "This email contains code related to handling email categories in the 'slae' application, specifically for retrieving emails by category using a Next.js API route."
   }
 ]
